@@ -49,6 +49,7 @@ object QuotableImpl {
     private val WHEN = OtpErlangAtom("when")
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(associationOperation: AssociationOperation): OtpErlangObject {
         val children = associationOperation.children
 
@@ -59,6 +60,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(infix: Infix): OtpErlangObject {
         val quotedLeftOperand = infix.leftOperand()!!.quote()
 
@@ -78,6 +80,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(notIn: NotIn): OtpErlangObject {
         val quotedLeftOperand = notIn.leftOperand()!!.quote()
 
@@ -104,6 +107,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(bitString: ElixirBitString): OtpErlangObject {
         val openingBits = bitString.node.getChildren(TokenSet.create(ElixirTypes.OPENING_BIT))
 
@@ -119,9 +123,11 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(blockIdentifier: ElixirBlockIdentifier): OtpErlangObject = OtpErlangAtom(blockIdentifier.node.text)
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(blockItem: ElixirBlockItem): OtpErlangObject {
         val blockIdentifier = blockItem.blockIdentifier
         val quotedValue = blockItem.stab?.quote() ?: NIL
@@ -132,6 +138,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(bracketArguments: ElixirBracketArguments): OtpErlangObject {
         val children = bracketArguments.children
 
@@ -141,6 +148,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(digits: Digits): OtpErlangObject {
         val text = digits.text
         val base = digits.base()
@@ -155,6 +163,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(accessExpression: ElixirAccessExpression): OtpErlangObject {
         val children = accessExpression.children
 
@@ -166,6 +175,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(alias: ElixirAlias): OtpErlangObject =
             quotedFunctionCall(
                     ALIASES,
@@ -174,6 +184,7 @@ object QuotableImpl {
             )
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(anonymousFunction: ElixirAnonymousFunction): OtpErlangObject {
         val metadata = metadata(anonymousFunction)
         val quotedStab = anonymousFunction.stab.quote()
@@ -184,14 +195,17 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(associations: ElixirAssociations): OtpErlangObject = associations.associationsBase.quote()
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(associationsBase: ElixirAssociationsBase): OtpErlangObject {
         return OtpErlangList(associationsBase.children.map { it as Quotable }.map(Quotable::quote).toTypedArray())
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(atom: ElixirAtom): OtpErlangObject =
             atom.charListLine?.quoteAsAtom() ?: atom.stringLine?.quoteAsAtom() ?: atom.node.let { atomNode ->
                 val atomFragmentNode = atomNode.lastChildNode
@@ -202,13 +216,16 @@ object QuotableImpl {
             }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(atomKeyword: ElixirAtomKeyword): OtpErlangObject = OtpErlangAtom(atomKeyword.text)
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(charListLine: ElixirCharListLine): OtpErlangObject =
             quotedChildNodes(charListLine, *childNodes(charListLine.quoteCharListBody!!))
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(charToken: ElixirCharToken): OtpErlangObject {
         val children = charToken.node.getChildren(null)
 
@@ -233,6 +250,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(
             containerAssociationOperation: ElixirContainerAssociationOperation
     ): OtpErlangObject {
@@ -245,6 +263,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(atUnqualifiedBracketOperation: AtNumericBracketOperation): OtpErlangObject {
         val quotedOperator = atUnqualifiedBracketOperation.atPrefixOperator.quote()
 
@@ -270,6 +289,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(noParenthesesManyStrictNoParenthesesExpression: ElixirNoParenthesesManyStrictNoParenthesesExpression): OtpErlangObject {
         val children = noParenthesesManyStrictNoParenthesesExpression.children
 
@@ -278,12 +298,13 @@ object QuotableImpl {
         return (children[0] as Quotable).quote()
     }
 
-
     @Contract(pure = true)
+    @JvmStatic
     fun quote(multipleAliases: ElixirMultipleAliases): OtpErlangObject =
             quotedFunctionArguments(*multipleAliases.children.map { it as Quotable }.map { it.quote() }.toTypedArray())
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(mapUpdateArguments: ElixirMapUpdateArguments): OtpErlangObject {
         val children = mapUpdateArguments.children
 
@@ -317,9 +338,11 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(mapOperation: ElixirMapOperation): OtpErlangObject = mapOperation.mapArguments.quote()
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(mapArguments: ElixirMapArguments): OtpErlangObject {
         val node = mapArguments.node
         val openingCurlies = node.getChildren(TokenSet.create(ElixirTypes.OPENING_CURLY))
@@ -339,8 +362,8 @@ object QuotableImpl {
         )
     }
 
-
     @Contract(pure = true)
+    @JvmStatic
     fun quote(list: ElixirList): OtpErlangObject {
         val listArguments = list.children
         val quotedListArgumentList = mutableListOf<OtpErlangObject>()
@@ -367,11 +390,13 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(keywordKey: ElixirKeywordKey): OtpErlangObject =
             keywordKey.charListLine?.quoteAsAtom() ?: keywordKey.stringLine?.quoteAsAtom()
             ?: OtpErlangAtom(computeReadAction<String>(Computable { keywordKey.text }))
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(quotableKeywordPair: QuotableKeywordPair): OtpErlangObject {
         val quotedKeywordKey = quotableKeywordPair.keywordKey.quote()
         val quotedKeywordValue = quotableKeywordPair.keywordValue.quote()
@@ -383,6 +408,7 @@ object QuotableImpl {
 
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(atUnqualifiedBracketOperation: AtUnqualifiedBracketOperation): OtpErlangObject {
         val operator = atUnqualifiedBracketOperation.atPrefixOperator
         val quotedOperator = operator.quote()
@@ -412,6 +438,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(atUnqualifiedNoParenthesesCall: AtUnqualifiedNoParenthesesCall<*>): OtpErlangObject {
         val operator = atUnqualifiedNoParenthesesCall.atIdentifier.atPrefixOperator
         val quotedOperator = operator.quote()
@@ -441,8 +468,8 @@ object QuotableImpl {
         )
     }
 
-
     @Contract(pure = true)
+    @JvmStatic
     private fun quotedBlockCall(
             quotedIdentifier: OtpErlangObject,
             callMetadata: OtpErlangList,
@@ -462,6 +489,7 @@ object QuotableImpl {
         )
     }
 
+    @JvmStatic
     fun quote(bracketOperation: BracketOperation): OtpErlangObject {
         val children = bracketOperation.children
 
@@ -480,8 +508,8 @@ object QuotableImpl {
         )
     }
 
-
     @Contract(pure = true)
+    @JvmStatic
     fun quote(dotCall: DotCall<*>): OtpErlangObject {
         val leftOperand = dotCall.firstChild as Quotable
         val quotedLeftOperand = leftOperand.quote()
@@ -507,8 +535,8 @@ object QuotableImpl {
         )
     }
 
-
     @Contract(pure = true)
+    @JvmStatic
     private fun quotedParenthesesCall(
             quotedIdentifier: OtpErlangObject,
             identifierMetadata: OtpErlangList,
@@ -543,6 +571,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(`in`: In): OtpErlangObject {
         val children = `in`.children
 
@@ -606,8 +635,8 @@ object QuotableImpl {
         return quoted
     }
 
-
     @Contract(pure = true)
+    @JvmStatic
     fun quote(qualifiedAlias: QualifiedAlias): OtpErlangObject {
         val children = qualifiedAlias.children
 
@@ -648,6 +677,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(qualifiedMultipleAliases: QualifiedMultipleAliases): OtpErlangObject {
         val children = qualifiedMultipleAliases.children
 
@@ -671,6 +701,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(qualifiedBracketOperation: QualifiedBracketOperation): OtpErlangObject {
         var quotedIdentifier = (qualifiedBracketOperation.firstChild as Quotable).quote()
 
@@ -704,6 +735,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(qualifiedNoArgumentsCall: QualifiedNoArgumentsCall<*>): OtpErlangObject {
         val quotedQualifier = (qualifiedNoArgumentsCall.firstChild as Quotable).quote()
 
@@ -728,6 +760,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(qualifiedNoParenthesesCall: QualifiedNoParenthesesCall<*>): OtpErlangObject {
         val quotedQualifier = (qualifiedNoParenthesesCall.firstChild as Quotable).quote()
 
@@ -753,6 +786,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(qualifiedParenthesesCall: QualifiedParenthesesCall<*>): OtpErlangObject {
         val quotedQualifier = (qualifiedParenthesesCall.firstChild as Quotable).quote()
 
@@ -779,6 +813,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(unqualifiedBracketOperation: UnqualifiedBracketOperation): OtpErlangObject {
         val quotedIdentifier = OtpErlangAtom(unqualifiedBracketOperation.node.firstChildNode.text)
         val quotedContainer = quotedVariable(quotedIdentifier, metadata(unqualifiedBracketOperation))
@@ -799,6 +834,7 @@ object QuotableImpl {
      *
      */
     @Contract(pure = true)
+    @JvmStatic
     fun quote(unqualifiedNoParenthesesCall: UnqualifiedNoParenthesesCall<*>): OtpErlangObject {
         val quotedIdentifier = OtpErlangAtom(unqualifiedNoParenthesesCall.functionName())
         val quotedArguments = unqualifiedNoParenthesesCall.noParenthesesOneArgument.quoteArguments()
@@ -843,6 +879,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(unqualifiedNoArgumentsCall: UnqualifiedNoArgumentsCall<*>): OtpErlangObject {
         val doBlock = unqualifiedNoArgumentsCall.doBlock
         val quoted: OtpErlangObject
@@ -875,6 +912,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(unqualifiedParenthesesCall: UnqualifiedParenthesesCall<*>): OtpErlangObject {
         val metadata = metadata(unqualifiedParenthesesCall)
         val quotedIdentifier = OtpErlangAtom(unqualifiedParenthesesCall.node.firstChildNode.text)
@@ -890,6 +928,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(parentheticalStab: ElixirParentheticalStab): OtpErlangObject =
             parentheticalStab.stab?.quote() ?:
             // @note CANNOT use quotedFunctionCall because it requires metadata and gives nil instead of [] when no
@@ -903,12 +942,15 @@ object QuotableImpl {
        {name, metadata, context}.  Importantly, context is nil when there is no context while arguments are [] when
        there are no arguments. */
     @Contract(pure = true)
+    @JvmStatic
     fun quote(variable: ElixirVariable): OtpErlangObject = quotedVariable(variable)
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(operator: Operator): OtpErlangObject = OtpErlangAtom(operatorTokenNode(operator).text)
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(prefix: Prefix): OtpErlangObject {
         val children = prefix.children
 
@@ -927,18 +969,21 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(children: Array<PsiElement>): OtpErlangObject =
         children.asSequence().filter { it !is Unquoted }.map {
             it as? Quotable ?: throw TODO("Child, $it, must be Quotable or Unquoted")
         }.toList().toTypedArray().let { quote(it) }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(file: PsiFile): OtpErlangObject =
             (file.viewProvider.getPsi(ElixirLanguage.INSTANCE) as ElixirFile).let { root ->
                 ElixirPsiImplUtil.quote(root)
             }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(unqualifiedNoParenthesesManyArgumentsCall: ElixirUnqualifiedNoParenthesesManyArgumentsCall): OtpErlangObject {
         val quotedIdentifier = unqualifiedNoParenthesesManyArgumentsCall.identifier.quote()
         val quotedArguments = ElixirPsiImplUtil.quoteArguments(unqualifiedNoParenthesesManyArgumentsCall)
@@ -947,6 +992,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(sigilHeredoc: SigilHeredoc): OtpErlangObject {
         val quotedHeredoc = quote(sigilHeredoc as Heredoc)
 
@@ -954,6 +1000,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(sigilLine: SigilLine): OtpErlangObject {
         val bodyChildNodes = childNodes(sigilLine.body)
         val quotedBody = quotedChildNodes(sigilLine, *bodyChildNodes)
@@ -962,10 +1009,12 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(quotableKeywordList: QuotableKeywordList): OtpErlangObject =
             OtpErlangList(quotableKeywordList.quotableKeywordPairList().map { it.quote() }.toTypedArray())
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(heredocLine: HeredocLine, heredoc: Heredoc, prefixLength: Int): OtpErlangObject {
         val excessWhitespace = heredocLine.heredocLinePrefix.excessWhitespace(heredoc.fragmentType, prefixLength)
         val directChildNodes = childNodes(heredocLine.body)
@@ -984,6 +1033,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(heredoc: Heredoc): OtpErlangObject {
         val prefixLength = heredoc.heredocPrefix.textLength
         val alignedNodeQueue = LinkedList<ASTNode>()
@@ -1004,6 +1054,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(tuple: ElixirTuple): OtpErlangObject {
         val openingCurlies = tuple.node.getChildren(TokenSet.create(ElixirTypes.OPENING_CURLY))
 
@@ -1026,6 +1077,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(structOperation: ElixirStructOperation): OtpErlangObject {
         val children = structOperation.children
 
@@ -1046,10 +1098,12 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(stringLine: ElixirStringLine): OtpErlangObject =
             quotedChildNodes(stringLine, *childNodes(stringLine.quoteStringBody!!))
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(stabParenthesesSignature: ElixirStabParenthesesSignature): OtpErlangObject {
         val children = stabParenthesesSignature.children
 
@@ -1083,6 +1137,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(stabOperation: ElixirStabOperation): OtpErlangObject {
         val operator = stabOperation.operator()
         val quotedOperator = operator.quote()
@@ -1097,6 +1152,7 @@ object QuotableImpl {
 
     // https://github.com/elixir-lang/elixir/blob/de39bbaca277002797e52ffbde617ace06233a2b/lib/elixir/src/elixir_parser.yrl#L277
     @Contract(pure = true)
+    @JvmStatic
     fun quote(stabNoParenthesesSignature: ElixirStabNoParenthesesSignature): OtpErlangObject =
         stabNoParenthesesSignature.noParenthesesArguments.quoteArguments()
                 .let { unwrapWhen(it) }
@@ -1104,6 +1160,7 @@ object QuotableImpl {
                 .let { elixirCharList(it) }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(stabBody: ElixirStabBody): OtpErlangObject =
             stabBody.children
                     .asSequence()
@@ -1116,10 +1173,12 @@ object QuotableImpl {
                     .let { buildBlock(it.toList()) }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(stab: ElixirStab): OtpErlangObject =
             stab.stabBody?.quote() ?: stab.stabOperationList.map(Quotable::quote).toTypedArray().let(::OtpErlangList)
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(sigilModifiers: ElixirSigilModifiers): OtpErlangObject {
         val codePoints = sigilModifiers.text.codePoints().toArray()
 
@@ -1131,6 +1190,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(relativeIdentifier: ElixirRelativeIdentifier): OtpErlangObject {
         val children = relativeIdentifier.children
 
@@ -1156,6 +1216,7 @@ object QuotableImpl {
      * (`:::`) to binary of a call of `Kernel.to_string`
      */
     @Contract(pure = true)
+    @JvmStatic
     fun quote(interpolation: ElixirInterpolation): OtpErlangObject {
         val quotedChildren = quote(interpolation.children)
         val interpolationMetadata = metadata(interpolation)
@@ -1180,8 +1241,10 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(identifier: ElixirIdentifier): OtpErlangObject = OtpErlangAtom(identifier.text)
 
+    @JvmStatic
     fun quote(decimalFloat: ElixirDecimalFloat): OtpErlangObject {
         val integralDigitsList = decimalFloat.decimalFloatIntegral.decimalWholeNumber.digitsList()
         val integralString = compactDigits(integralDigitsList)
@@ -1236,8 +1299,10 @@ object QuotableImpl {
         }
     }
 
+    @JvmStatic
     fun quote(@Suppress("UNUSED_PARAMETER") emptyParentheses: ElixirEmptyParentheses): OtpErlangObject = NIL
 
+    @JvmStatic
     fun quote(file: ElixirFile): OtpErlangObject {
         val quotedChildren = LinkedList<OtpErlangObject>()
 
@@ -1265,6 +1330,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(sigil: Sigil, quotedContent: OtpErlangObject): OtpErlangObject {
         val sigilName = sigil.sigilName()
         val sigilMetadata = metadata(sigil)
@@ -1280,6 +1346,7 @@ object QuotableImpl {
     }
 
     @Contract(pure = true)
+    @JvmStatic
     fun quote(wholeNumber: WholeNumber): OtpErlangObject {
         val digitsList = wholeNumber.digitsList()
 
